@@ -1,0 +1,8 @@
+lex_file = "ada.l"
+yacc_file = "ada.y"
+output = "test"
+
+yacc -d -v $yacc_file
+lex $lex_file
+/usr/bin/gcc lex.yy.c y.tab.c -o $output -ll -ly
+./$output

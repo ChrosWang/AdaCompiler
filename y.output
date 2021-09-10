@@ -1,0 +1,2313 @@
+Terminals unused in grammar
+
+   TICK
+   ACCESS
+   NEW
+   DOTALL
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: main_body
+
+    2 main_body: main_specification IS declarative_part main_beg sequence_of_statements exception_part END ';'
+
+    3 main_beg: BEG
+
+    4 main_specification: PROCEDURE ID
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin sequence_of_statements exception_part END ';'
+
+    6 procedure_begin: BEG
+
+    7 procedure_specification: PROCEDURE ID
+
+    8 formal_parameter_part: '(' parameters ')'
+    9                      | %empty
+
+   10 parameters: identifier_list ':' mode type_name ';' parameters
+   11           | identifier_list ':' mode type_name
+
+   12 mode: IN OUT
+   13     | OUT
+   14     | IN
+   15     | %empty
+
+   16 type_name: ID
+
+   17 declarative_part: objects ';' declarative_part
+   18                 | types ';' declarative_part
+   19                 | exceptions ';' declarative_part
+   20                 | declarative_part_p
+
+   21 declarative_part_p: procedure_body declarative_part_p
+   22                   | %empty
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT constant_num ')' OF type_name
+   24      | TYPE ID IS RECORD component_list ENDREC
+   25      | TYPE ID IS RANGE constant_num DOTDOT constant_num
+
+   26 constant_num: NUMBER
+   27             | ID
+
+   28 component_list: component ';' component_list
+   29               | component ';'
+
+   30 component: objects
+
+   31 objects: identifier_list ':' type_name
+   32        | constant
+
+   33 constant: identifier_list ':' CONSTANT ASSIGN constant_expression
+
+   34 constant_expression: expression
+
+   35 exceptions: identifier_list ':' EXCEPTION
+
+   36 sequence_of_statements: statement sequence_of_statements
+   37                       | %empty
+
+   38 statement: ID opt_actual_para_part opt_assign ';'
+   39          | loop_part
+   40          | if_statement
+   41          | RAISE ID ';'
+   42          | RAISE ';'
+   43          | NULLWORD ';'
+
+   44 opt_assign: ASSIGN expression
+   45           | %empty
+
+   46 opt_actual_para_part: '(' expression_list ')'
+   47                     | %empty
+
+   48 expression_list: expression_list ',' expression
+   49                | expression
+
+   50 loop_part: loop_start inside_loop ENDLOOP ';'
+
+   51 loop_start: LOOP
+
+   52 inside_loop: loop_statements
+   53            | inside_loop loop_statements
+
+   54 loop_statements: statement
+   55                | exit_cond
+
+   56 exit_cond: EXITWHEN condition ';'
+   57          | EXIT ';'
+
+   58 if_statement: ifcond sequence_of_statements else_if else endif ';'
+
+   59 ifcond: IF condition then_cond
+
+   60 else_if: ELSEIF condition then_cond sequence_of_statements else_if
+   61        | %empty
+
+   62 then_cond: THEN
+
+   63 else: ELSE sequence_of_statements
+   64     | %empty
+
+   65 endif: ENDIF
+
+   66 condition: expression
+
+   67 expression: relation
+   68           | expression boolean_operation relation
+
+   69 relation: simple_expression
+   70         | relation relational_operation simple_expression
+
+   71 simple_expression: '-' term
+   72                  | term
+   73                  | simple_expression adding_operation term
+
+   74 term: factor
+   75     | term multiplying_operation factor
+
+   76 factor: NOT primary
+   77       | primary EXP primary
+   78       | primary
+
+   79 primary: NUMBER
+   80        | ID
+   81        | ID '(' expression ')'
+   82        | '(' expression ')'
+
+   83 boolean_operation: AND
+   84                  | OR
+
+   85 relational_operation: EQ
+   86                     | NEQ
+   87                     | LT
+   88                     | GT
+   89                     | GTE
+   90                     | LTE
+
+   91 adding_operation: '+'
+   92                 | '-'
+
+   93 multiplying_operation: '*'
+   94                      | '/'
+
+   95 exception_part: exception_start exception_list
+   96               | %empty
+
+   97 exception_start: EXCEPTION
+
+   98 exception_list: exception_list exception_hand
+   99               | exception_hand
+
+  100 exception_hand: WHEN choice_sequence ARROW sequence_of_statements
+
+  101 choice_sequence: choice_sequence '|' ID
+  102                | ID
+  103                | OTHERS
+
+  104 identifier_list: ID ',' identifier_list
+  105                | ID
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 8 23 46 81 82
+')' (41) 8 23 46 81 82
+'*' (42) 93
+'+' (43) 91
+',' (44) 48 104
+'-' (45) 71 92
+'/' (47) 94
+':' (58) 10 11 31 33 35
+';' (59) 2 5 10 17 18 19 28 29 38 41 42 43 50 56 57 58
+'|' (124) 101
+error (256)
+IS (258) 2 5 23 24 25
+BEG (259) 3 6
+END (260) 2 5
+PROCEDURE (261) 4 7
+ID (262) 4 7 16 23 24 25 27 38 41 80 81 101 102 104 105
+NUMBER (263) 26 79
+TYPE (264) 23 24 25
+ARRAY (265) 23
+RAISE (266) 41 42
+OTHERS (267) 103
+RECORD (268) 24
+IN (269) 12 14
+OUT (270) 12 13
+RANGE (271) 25
+CONSTANT (272) 33
+ASSIGN (273) 33 44
+EXCEPTION (274) 35 97
+NULLWORD (275) 43
+LOOP (276) 51
+IF (277) 59
+THEN (278) 62
+ELSEIF (279) 60
+ELSE (280) 63
+EXIT (281) 57
+WHEN (282) 100
+AND (283) 83
+OR (284) 84
+EQ (285) 85
+NEQ (286) 86
+LT (287) 87
+GT (288) 88
+GTE (289) 89
+LTE (290) 90
+TICK (291)
+NOT (292) 76
+EXP (293) 77
+ARROW (294) 100
+OF (295) 23
+DOTDOT (296) 23 25
+ENDIF (297) 65
+ENDREC (298) 24
+ENDLOOP (299) 50
+EXITWHEN (300) 56
+ACCESS (301)
+NEW (302)
+DOTALL (303)
+
+
+Nonterminals, with rules where they appear
+
+$accept (59)
+    on left: 0
+program (60)
+    on left: 1, on right: 0
+main_body (61)
+    on left: 2, on right: 1
+main_beg (62)
+    on left: 3, on right: 2
+main_specification (63)
+    on left: 4, on right: 2
+procedure_body (64)
+    on left: 5, on right: 21
+procedure_begin (65)
+    on left: 6, on right: 5
+procedure_specification (66)
+    on left: 7, on right: 5
+formal_parameter_part (67)
+    on left: 8 9, on right: 5
+parameters (68)
+    on left: 10 11, on right: 8 10
+mode (69)
+    on left: 12 13 14 15, on right: 10 11
+type_name (70)
+    on left: 16, on right: 10 11 23 31
+declarative_part (71)
+    on left: 17 18 19 20, on right: 2 5 17 18 19
+declarative_part_p (72)
+    on left: 21 22, on right: 20 21
+types (73)
+    on left: 23 24 25, on right: 18
+constant_num (74)
+    on left: 26 27, on right: 23 25
+component_list (75)
+    on left: 28 29, on right: 24 28
+component (76)
+    on left: 30, on right: 28 29
+objects (77)
+    on left: 31 32, on right: 17 30
+constant (78)
+    on left: 33, on right: 32
+constant_expression (79)
+    on left: 34, on right: 33
+exceptions (80)
+    on left: 35, on right: 19
+sequence_of_statements (81)
+    on left: 36 37, on right: 2 5 36 58 60 63 100
+statement (82)
+    on left: 38 39 40 41 42 43, on right: 36 54
+opt_assign (83)
+    on left: 44 45, on right: 38
+opt_actual_para_part (84)
+    on left: 46 47, on right: 38
+expression_list (85)
+    on left: 48 49, on right: 46 48
+loop_part (86)
+    on left: 50, on right: 39
+loop_start (87)
+    on left: 51, on right: 50
+inside_loop (88)
+    on left: 52 53, on right: 50 53
+loop_statements (89)
+    on left: 54 55, on right: 52 53
+exit_cond (90)
+    on left: 56 57, on right: 55
+if_statement (91)
+    on left: 58, on right: 40
+ifcond (92)
+    on left: 59, on right: 58
+else_if (93)
+    on left: 60 61, on right: 58 60
+then_cond (94)
+    on left: 62, on right: 59 60
+else (95)
+    on left: 63 64, on right: 58
+endif (96)
+    on left: 65, on right: 58
+condition (97)
+    on left: 66, on right: 56 59 60
+expression (98)
+    on left: 67 68, on right: 34 44 48 49 66 68 81 82
+relation (99)
+    on left: 69 70, on right: 67 68 70
+simple_expression (100)
+    on left: 71 72 73, on right: 69 70 73
+term (101)
+    on left: 74 75, on right: 71 72 73 75
+factor (102)
+    on left: 76 77 78, on right: 74 75
+primary (103)
+    on left: 79 80 81 82, on right: 76 77 78
+boolean_operation (104)
+    on left: 83 84, on right: 68
+relational_operation (105)
+    on left: 85 86 87 88 89 90, on right: 70
+adding_operation (106)
+    on left: 91 92, on right: 73
+multiplying_operation (107)
+    on left: 93 94, on right: 75
+exception_part (108)
+    on left: 95 96, on right: 2 5
+exception_start (109)
+    on left: 97, on right: 95
+exception_list (110)
+    on left: 98 99, on right: 95 98
+exception_hand (111)
+    on left: 100, on right: 98 99
+choice_sequence (112)
+    on left: 101 102 103, on right: 100 101
+identifier_list (113)
+    on left: 104 105, on right: 10 11 31 33 35 104
+
+
+State 0
+
+    0 $accept: . program $end
+
+    PROCEDURE  shift, and go to state 1
+
+    program             go to state 2
+    main_body           go to state 3
+    main_specification  go to state 4
+
+
+State 1
+
+    4 main_specification: PROCEDURE . ID
+
+    ID  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 program: main_body .
+
+    $default  reduce using rule 1 (program)
+
+
+State 4
+
+    2 main_body: main_specification . IS declarative_part main_beg sequence_of_statements exception_part END ';'
+
+    IS  shift, and go to state 7
+
+
+State 5
+
+    4 main_specification: PROCEDURE ID .
+
+    $default  reduce using rule 4 (main_specification)
+
+
+State 6
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 7
+
+    2 main_body: main_specification IS . declarative_part main_beg sequence_of_statements exception_part END ';'
+
+    PROCEDURE  shift, and go to state 8
+    ID         shift, and go to state 9
+    TYPE       shift, and go to state 10
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part         go to state 13
+    declarative_part_p       go to state 14
+    types                    go to state 15
+    objects                  go to state 16
+    constant                 go to state 17
+    exceptions               go to state 18
+    identifier_list          go to state 19
+
+
+State 8
+
+    7 procedure_specification: PROCEDURE . ID
+
+    ID  shift, and go to state 20
+
+
+State 9
+
+  104 identifier_list: ID . ',' identifier_list
+  105                | ID .
+
+    ','  shift, and go to state 21
+
+    $default  reduce using rule 105 (identifier_list)
+
+
+State 10
+
+   23 types: TYPE . ID IS ARRAY '(' constant_num DOTDOT constant_num ')' OF type_name
+   24      | TYPE . ID IS RECORD component_list ENDREC
+   25      | TYPE . ID IS RANGE constant_num DOTDOT constant_num
+
+    ID  shift, and go to state 22
+
+
+State 11
+
+   21 declarative_part_p: procedure_body . declarative_part_p
+
+    PROCEDURE  shift, and go to state 8
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part_p       go to state 23
+
+
+State 12
+
+    5 procedure_body: procedure_specification . formal_parameter_part IS declarative_part procedure_begin sequence_of_statements exception_part END ';'
+
+    '('  shift, and go to state 24
+
+    $default  reduce using rule 9 (formal_parameter_part)
+
+    formal_parameter_part  go to state 25
+
+
+State 13
+
+    2 main_body: main_specification IS declarative_part . main_beg sequence_of_statements exception_part END ';'
+
+    BEG  shift, and go to state 26
+
+    main_beg  go to state 27
+
+
+State 14
+
+   20 declarative_part: declarative_part_p .
+
+    $default  reduce using rule 20 (declarative_part)
+
+
+State 15
+
+   18 declarative_part: types . ';' declarative_part
+
+    ';'  shift, and go to state 28
+
+
+State 16
+
+   17 declarative_part: objects . ';' declarative_part
+
+    ';'  shift, and go to state 29
+
+
+State 17
+
+   32 objects: constant .
+
+    $default  reduce using rule 32 (objects)
+
+
+State 18
+
+   19 declarative_part: exceptions . ';' declarative_part
+
+    ';'  shift, and go to state 30
+
+
+State 19
+
+   31 objects: identifier_list . ':' type_name
+   33 constant: identifier_list . ':' CONSTANT ASSIGN constant_expression
+   35 exceptions: identifier_list . ':' EXCEPTION
+
+    ':'  shift, and go to state 31
+
+
+State 20
+
+    7 procedure_specification: PROCEDURE ID .
+
+    $default  reduce using rule 7 (procedure_specification)
+
+
+State 21
+
+  104 identifier_list: ID ',' . identifier_list
+
+    ID  shift, and go to state 9
+
+    identifier_list  go to state 32
+
+
+State 22
+
+   23 types: TYPE ID . IS ARRAY '(' constant_num DOTDOT constant_num ')' OF type_name
+   24      | TYPE ID . IS RECORD component_list ENDREC
+   25      | TYPE ID . IS RANGE constant_num DOTDOT constant_num
+
+    IS  shift, and go to state 33
+
+
+State 23
+
+   21 declarative_part_p: procedure_body declarative_part_p .
+
+    $default  reduce using rule 21 (declarative_part_p)
+
+
+State 24
+
+    8 formal_parameter_part: '(' . parameters ')'
+
+    ID  shift, and go to state 9
+
+    parameters       go to state 34
+    identifier_list  go to state 35
+
+
+State 25
+
+    5 procedure_body: procedure_specification formal_parameter_part . IS declarative_part procedure_begin sequence_of_statements exception_part END ';'
+
+    IS  shift, and go to state 36
+
+
+State 26
+
+    3 main_beg: BEG .
+
+    $default  reduce using rule 3 (main_beg)
+
+
+State 27
+
+    2 main_body: main_specification IS declarative_part main_beg . sequence_of_statements exception_part END ';'
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 42
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 28
+
+   18 declarative_part: types ';' . declarative_part
+
+    PROCEDURE  shift, and go to state 8
+    ID         shift, and go to state 9
+    TYPE       shift, and go to state 10
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part         go to state 48
+    declarative_part_p       go to state 14
+    types                    go to state 15
+    objects                  go to state 16
+    constant                 go to state 17
+    exceptions               go to state 18
+    identifier_list          go to state 19
+
+
+State 29
+
+   17 declarative_part: objects ';' . declarative_part
+
+    PROCEDURE  shift, and go to state 8
+    ID         shift, and go to state 9
+    TYPE       shift, and go to state 10
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part         go to state 49
+    declarative_part_p       go to state 14
+    types                    go to state 15
+    objects                  go to state 16
+    constant                 go to state 17
+    exceptions               go to state 18
+    identifier_list          go to state 19
+
+
+State 30
+
+   19 declarative_part: exceptions ';' . declarative_part
+
+    PROCEDURE  shift, and go to state 8
+    ID         shift, and go to state 9
+    TYPE       shift, and go to state 10
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part         go to state 50
+    declarative_part_p       go to state 14
+    types                    go to state 15
+    objects                  go to state 16
+    constant                 go to state 17
+    exceptions               go to state 18
+    identifier_list          go to state 19
+
+
+State 31
+
+   31 objects: identifier_list ':' . type_name
+   33 constant: identifier_list ':' . CONSTANT ASSIGN constant_expression
+   35 exceptions: identifier_list ':' . EXCEPTION
+
+    ID         shift, and go to state 51
+    CONSTANT   shift, and go to state 52
+    EXCEPTION  shift, and go to state 53
+
+    type_name  go to state 54
+
+
+State 32
+
+  104 identifier_list: ID ',' identifier_list .
+
+    $default  reduce using rule 104 (identifier_list)
+
+
+State 33
+
+   23 types: TYPE ID IS . ARRAY '(' constant_num DOTDOT constant_num ')' OF type_name
+   24      | TYPE ID IS . RECORD component_list ENDREC
+   25      | TYPE ID IS . RANGE constant_num DOTDOT constant_num
+
+    ARRAY   shift, and go to state 55
+    RECORD  shift, and go to state 56
+    RANGE   shift, and go to state 57
+
+
+State 34
+
+    8 formal_parameter_part: '(' parameters . ')'
+
+    ')'  shift, and go to state 58
+
+
+State 35
+
+   10 parameters: identifier_list . ':' mode type_name ';' parameters
+   11           | identifier_list . ':' mode type_name
+
+    ':'  shift, and go to state 59
+
+
+State 36
+
+    5 procedure_body: procedure_specification formal_parameter_part IS . declarative_part procedure_begin sequence_of_statements exception_part END ';'
+
+    PROCEDURE  shift, and go to state 8
+    ID         shift, and go to state 9
+    TYPE       shift, and go to state 10
+
+    $default  reduce using rule 22 (declarative_part_p)
+
+    procedure_body           go to state 11
+    procedure_specification  go to state 12
+    declarative_part         go to state 60
+    declarative_part_p       go to state 14
+    types                    go to state 15
+    objects                  go to state 16
+    constant                 go to state 17
+    exceptions               go to state 18
+    identifier_list          go to state 19
+
+
+State 37
+
+   38 statement: ID . opt_actual_para_part opt_assign ';'
+
+    '('  shift, and go to state 61
+
+    $default  reduce using rule 47 (opt_actual_para_part)
+
+    opt_actual_para_part  go to state 62
+
+
+State 38
+
+   41 statement: RAISE . ID ';'
+   42          | RAISE . ';'
+
+    ID   shift, and go to state 63
+    ';'  shift, and go to state 64
+
+
+State 39
+
+   43 statement: NULLWORD . ';'
+
+    ';'  shift, and go to state 65
+
+
+State 40
+
+   51 loop_start: LOOP .
+
+    $default  reduce using rule 51 (loop_start)
+
+
+State 41
+
+   59 ifcond: IF . condition then_cond
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    condition          go to state 71
+    expression         go to state 72
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 42
+
+    2 main_body: main_specification IS declarative_part main_beg sequence_of_statements . exception_part END ';'
+
+    EXCEPTION  shift, and go to state 78
+
+    $default  reduce using rule 96 (exception_part)
+
+    exception_part   go to state 79
+    exception_start  go to state 80
+
+
+State 43
+
+   36 sequence_of_statements: statement . sequence_of_statements
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 81
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 44
+
+   39 statement: loop_part .
+
+    $default  reduce using rule 39 (statement)
+
+
+State 45
+
+   50 loop_part: loop_start . inside_loop ENDLOOP ';'
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+    EXIT      shift, and go to state 82
+    EXITWHEN  shift, and go to state 83
+
+    statement        go to state 84
+    loop_part        go to state 44
+    loop_start       go to state 45
+    inside_loop      go to state 85
+    loop_statements  go to state 86
+    exit_cond        go to state 87
+    if_statement     go to state 46
+    ifcond           go to state 47
+
+
+State 46
+
+   40 statement: if_statement .
+
+    $default  reduce using rule 40 (statement)
+
+
+State 47
+
+   58 if_statement: ifcond . sequence_of_statements else_if else endif ';'
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 88
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 48
+
+   18 declarative_part: types ';' declarative_part .
+
+    $default  reduce using rule 18 (declarative_part)
+
+
+State 49
+
+   17 declarative_part: objects ';' declarative_part .
+
+    $default  reduce using rule 17 (declarative_part)
+
+
+State 50
+
+   19 declarative_part: exceptions ';' declarative_part .
+
+    $default  reduce using rule 19 (declarative_part)
+
+
+State 51
+
+   16 type_name: ID .
+
+    $default  reduce using rule 16 (type_name)
+
+
+State 52
+
+   33 constant: identifier_list ':' CONSTANT . ASSIGN constant_expression
+
+    ASSIGN  shift, and go to state 89
+
+
+State 53
+
+   35 exceptions: identifier_list ':' EXCEPTION .
+
+    $default  reduce using rule 35 (exceptions)
+
+
+State 54
+
+   31 objects: identifier_list ':' type_name .
+
+    $default  reduce using rule 31 (objects)
+
+
+State 55
+
+   23 types: TYPE ID IS ARRAY . '(' constant_num DOTDOT constant_num ')' OF type_name
+
+    '('  shift, and go to state 90
+
+
+State 56
+
+   24 types: TYPE ID IS RECORD . component_list ENDREC
+
+    ID  shift, and go to state 9
+
+    component_list   go to state 91
+    component        go to state 92
+    objects          go to state 93
+    constant         go to state 17
+    identifier_list  go to state 94
+
+
+State 57
+
+   25 types: TYPE ID IS RANGE . constant_num DOTDOT constant_num
+
+    ID      shift, and go to state 95
+    NUMBER  shift, and go to state 96
+
+    constant_num  go to state 97
+
+
+State 58
+
+    8 formal_parameter_part: '(' parameters ')' .
+
+    $default  reduce using rule 8 (formal_parameter_part)
+
+
+State 59
+
+   10 parameters: identifier_list ':' . mode type_name ';' parameters
+   11           | identifier_list ':' . mode type_name
+
+    IN   shift, and go to state 98
+    OUT  shift, and go to state 99
+
+    $default  reduce using rule 15 (mode)
+
+    mode  go to state 100
+
+
+State 60
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part . procedure_begin sequence_of_statements exception_part END ';'
+
+    BEG  shift, and go to state 101
+
+    procedure_begin  go to state 102
+
+
+State 61
+
+   46 opt_actual_para_part: '(' . expression_list ')'
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    expression_list    go to state 103
+    expression         go to state 104
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 62
+
+   38 statement: ID opt_actual_para_part . opt_assign ';'
+
+    ASSIGN  shift, and go to state 105
+
+    $default  reduce using rule 45 (opt_assign)
+
+    opt_assign  go to state 106
+
+
+State 63
+
+   41 statement: RAISE ID . ';'
+
+    ';'  shift, and go to state 107
+
+
+State 64
+
+   42 statement: RAISE ';' .
+
+    $default  reduce using rule 42 (statement)
+
+
+State 65
+
+   43 statement: NULLWORD ';' .
+
+    $default  reduce using rule 43 (statement)
+
+
+State 66
+
+   80 primary: ID .
+   81        | ID . '(' expression ')'
+
+    '('  shift, and go to state 108
+
+    $default  reduce using rule 80 (primary)
+
+
+State 67
+
+   79 primary: NUMBER .
+
+    $default  reduce using rule 79 (primary)
+
+
+State 68
+
+   76 factor: NOT . primary
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    '('     shift, and go to state 69
+
+    primary  go to state 109
+
+
+State 69
+
+   82 primary: '(' . expression ')'
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    expression         go to state 110
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 70
+
+   71 simple_expression: '-' . term
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+
+    term     go to state 111
+    factor   go to state 76
+    primary  go to state 77
+
+
+State 71
+
+   59 ifcond: IF condition . then_cond
+
+    THEN  shift, and go to state 112
+
+    then_cond  go to state 113
+
+
+State 72
+
+   66 condition: expression .
+   68 expression: expression . boolean_operation relation
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+
+    $default  reduce using rule 66 (condition)
+
+    boolean_operation  go to state 116
+
+
+State 73
+
+   67 expression: relation .
+   70 relation: relation . relational_operation simple_expression
+
+    EQ   shift, and go to state 117
+    NEQ  shift, and go to state 118
+    LT   shift, and go to state 119
+    GT   shift, and go to state 120
+    GTE  shift, and go to state 121
+    LTE  shift, and go to state 122
+
+    $default  reduce using rule 67 (expression)
+
+    relational_operation  go to state 123
+
+
+State 74
+
+   69 relation: simple_expression .
+   73 simple_expression: simple_expression . adding_operation term
+
+    '-'  shift, and go to state 124
+    '+'  shift, and go to state 125
+
+    $default  reduce using rule 69 (relation)
+
+    adding_operation  go to state 126
+
+
+State 75
+
+   72 simple_expression: term .
+   75 term: term . multiplying_operation factor
+
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+
+    $default  reduce using rule 72 (simple_expression)
+
+    multiplying_operation  go to state 129
+
+
+State 76
+
+   74 term: factor .
+
+    $default  reduce using rule 74 (term)
+
+
+State 77
+
+   77 factor: primary . EXP primary
+   78       | primary .
+
+    EXP  shift, and go to state 130
+
+    $default  reduce using rule 78 (factor)
+
+
+State 78
+
+   97 exception_start: EXCEPTION .
+
+    $default  reduce using rule 97 (exception_start)
+
+
+State 79
+
+    2 main_body: main_specification IS declarative_part main_beg sequence_of_statements exception_part . END ';'
+
+    END  shift, and go to state 131
+
+
+State 80
+
+   95 exception_part: exception_start . exception_list
+
+    WHEN  shift, and go to state 132
+
+    exception_list  go to state 133
+    exception_hand  go to state 134
+
+
+State 81
+
+   36 sequence_of_statements: statement sequence_of_statements .
+
+    $default  reduce using rule 36 (sequence_of_statements)
+
+
+State 82
+
+   57 exit_cond: EXIT . ';'
+
+    ';'  shift, and go to state 135
+
+
+State 83
+
+   56 exit_cond: EXITWHEN . condition ';'
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    condition          go to state 136
+    expression         go to state 72
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 84
+
+   54 loop_statements: statement .
+
+    $default  reduce using rule 54 (loop_statements)
+
+
+State 85
+
+   50 loop_part: loop_start inside_loop . ENDLOOP ';'
+   53 inside_loop: inside_loop . loop_statements
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+    EXIT      shift, and go to state 82
+    ENDLOOP   shift, and go to state 137
+    EXITWHEN  shift, and go to state 83
+
+    statement        go to state 84
+    loop_part        go to state 44
+    loop_start       go to state 45
+    loop_statements  go to state 138
+    exit_cond        go to state 87
+    if_statement     go to state 46
+    ifcond           go to state 47
+
+
+State 86
+
+   52 inside_loop: loop_statements .
+
+    $default  reduce using rule 52 (inside_loop)
+
+
+State 87
+
+   55 loop_statements: exit_cond .
+
+    $default  reduce using rule 55 (loop_statements)
+
+
+State 88
+
+   58 if_statement: ifcond sequence_of_statements . else_if else endif ';'
+
+    ELSEIF  shift, and go to state 139
+
+    $default  reduce using rule 61 (else_if)
+
+    else_if  go to state 140
+
+
+State 89
+
+   33 constant: identifier_list ':' CONSTANT ASSIGN . constant_expression
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    constant_expression  go to state 141
+    expression           go to state 142
+    relation             go to state 73
+    simple_expression    go to state 74
+    term                 go to state 75
+    factor               go to state 76
+    primary              go to state 77
+
+
+State 90
+
+   23 types: TYPE ID IS ARRAY '(' . constant_num DOTDOT constant_num ')' OF type_name
+
+    ID      shift, and go to state 95
+    NUMBER  shift, and go to state 96
+
+    constant_num  go to state 143
+
+
+State 91
+
+   24 types: TYPE ID IS RECORD component_list . ENDREC
+
+    ENDREC  shift, and go to state 144
+
+
+State 92
+
+   28 component_list: component . ';' component_list
+   29               | component . ';'
+
+    ';'  shift, and go to state 145
+
+
+State 93
+
+   30 component: objects .
+
+    $default  reduce using rule 30 (component)
+
+
+State 94
+
+   31 objects: identifier_list . ':' type_name
+   33 constant: identifier_list . ':' CONSTANT ASSIGN constant_expression
+
+    ':'  shift, and go to state 146
+
+
+State 95
+
+   27 constant_num: ID .
+
+    $default  reduce using rule 27 (constant_num)
+
+
+State 96
+
+   26 constant_num: NUMBER .
+
+    $default  reduce using rule 26 (constant_num)
+
+
+State 97
+
+   25 types: TYPE ID IS RANGE constant_num . DOTDOT constant_num
+
+    DOTDOT  shift, and go to state 147
+
+
+State 98
+
+   12 mode: IN . OUT
+   14     | IN .
+
+    OUT  shift, and go to state 148
+
+    $default  reduce using rule 14 (mode)
+
+
+State 99
+
+   13 mode: OUT .
+
+    $default  reduce using rule 13 (mode)
+
+
+State 100
+
+   10 parameters: identifier_list ':' mode . type_name ';' parameters
+   11           | identifier_list ':' mode . type_name
+
+    ID  shift, and go to state 51
+
+    type_name  go to state 149
+
+
+State 101
+
+    6 procedure_begin: BEG .
+
+    $default  reduce using rule 6 (procedure_begin)
+
+
+State 102
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin . sequence_of_statements exception_part END ';'
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 150
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 103
+
+   46 opt_actual_para_part: '(' expression_list . ')'
+   48 expression_list: expression_list . ',' expression
+
+    ')'  shift, and go to state 151
+    ','  shift, and go to state 152
+
+
+State 104
+
+   49 expression_list: expression .
+   68 expression: expression . boolean_operation relation
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+
+    $default  reduce using rule 49 (expression_list)
+
+    boolean_operation  go to state 116
+
+
+State 105
+
+   44 opt_assign: ASSIGN . expression
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    expression         go to state 153
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 106
+
+   38 statement: ID opt_actual_para_part opt_assign . ';'
+
+    ';'  shift, and go to state 154
+
+
+State 107
+
+   41 statement: RAISE ID ';' .
+
+    $default  reduce using rule 41 (statement)
+
+
+State 108
+
+   81 primary: ID '(' . expression ')'
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    expression         go to state 155
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 109
+
+   76 factor: NOT primary .
+
+    $default  reduce using rule 76 (factor)
+
+
+State 110
+
+   68 expression: expression . boolean_operation relation
+   82 primary: '(' expression . ')'
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+    ')'  shift, and go to state 156
+
+    boolean_operation  go to state 116
+
+
+State 111
+
+   71 simple_expression: '-' term .
+   75 term: term . multiplying_operation factor
+
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+
+    $default  reduce using rule 71 (simple_expression)
+
+    multiplying_operation  go to state 129
+
+
+State 112
+
+   62 then_cond: THEN .
+
+    $default  reduce using rule 62 (then_cond)
+
+
+State 113
+
+   59 ifcond: IF condition then_cond .
+
+    $default  reduce using rule 59 (ifcond)
+
+
+State 114
+
+   83 boolean_operation: AND .
+
+    $default  reduce using rule 83 (boolean_operation)
+
+
+State 115
+
+   84 boolean_operation: OR .
+
+    $default  reduce using rule 84 (boolean_operation)
+
+
+State 116
+
+   68 expression: expression boolean_operation . relation
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    relation           go to state 157
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 117
+
+   85 relational_operation: EQ .
+
+    $default  reduce using rule 85 (relational_operation)
+
+
+State 118
+
+   86 relational_operation: NEQ .
+
+    $default  reduce using rule 86 (relational_operation)
+
+
+State 119
+
+   87 relational_operation: LT .
+
+    $default  reduce using rule 87 (relational_operation)
+
+
+State 120
+
+   88 relational_operation: GT .
+
+    $default  reduce using rule 88 (relational_operation)
+
+
+State 121
+
+   89 relational_operation: GTE .
+
+    $default  reduce using rule 89 (relational_operation)
+
+
+State 122
+
+   90 relational_operation: LTE .
+
+    $default  reduce using rule 90 (relational_operation)
+
+
+State 123
+
+   70 relation: relation relational_operation . simple_expression
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    simple_expression  go to state 158
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 124
+
+   92 adding_operation: '-' .
+
+    $default  reduce using rule 92 (adding_operation)
+
+
+State 125
+
+   91 adding_operation: '+' .
+
+    $default  reduce using rule 91 (adding_operation)
+
+
+State 126
+
+   73 simple_expression: simple_expression adding_operation . term
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+
+    term     go to state 159
+    factor   go to state 76
+    primary  go to state 77
+
+
+State 127
+
+   93 multiplying_operation: '*' .
+
+    $default  reduce using rule 93 (multiplying_operation)
+
+
+State 128
+
+   94 multiplying_operation: '/' .
+
+    $default  reduce using rule 94 (multiplying_operation)
+
+
+State 129
+
+   75 term: term multiplying_operation . factor
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+
+    factor   go to state 160
+    primary  go to state 77
+
+
+State 130
+
+   77 factor: primary EXP . primary
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    '('     shift, and go to state 69
+
+    primary  go to state 161
+
+
+State 131
+
+    2 main_body: main_specification IS declarative_part main_beg sequence_of_statements exception_part END . ';'
+
+    ';'  shift, and go to state 162
+
+
+State 132
+
+  100 exception_hand: WHEN . choice_sequence ARROW sequence_of_statements
+
+    ID      shift, and go to state 163
+    OTHERS  shift, and go to state 164
+
+    choice_sequence  go to state 165
+
+
+State 133
+
+   95 exception_part: exception_start exception_list .
+   98 exception_list: exception_list . exception_hand
+
+    WHEN  shift, and go to state 132
+
+    $default  reduce using rule 95 (exception_part)
+
+    exception_hand  go to state 166
+
+
+State 134
+
+   99 exception_list: exception_hand .
+
+    $default  reduce using rule 99 (exception_list)
+
+
+State 135
+
+   57 exit_cond: EXIT ';' .
+
+    $default  reduce using rule 57 (exit_cond)
+
+
+State 136
+
+   56 exit_cond: EXITWHEN condition . ';'
+
+    ';'  shift, and go to state 167
+
+
+State 137
+
+   50 loop_part: loop_start inside_loop ENDLOOP . ';'
+
+    ';'  shift, and go to state 168
+
+
+State 138
+
+   53 inside_loop: inside_loop loop_statements .
+
+    $default  reduce using rule 53 (inside_loop)
+
+
+State 139
+
+   60 else_if: ELSEIF . condition then_cond sequence_of_statements else_if
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    condition          go to state 169
+    expression         go to state 72
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 140
+
+   58 if_statement: ifcond sequence_of_statements else_if . else endif ';'
+
+    ELSE  shift, and go to state 170
+
+    $default  reduce using rule 64 (else)
+
+    else  go to state 171
+
+
+State 141
+
+   33 constant: identifier_list ':' CONSTANT ASSIGN constant_expression .
+
+    $default  reduce using rule 33 (constant)
+
+
+State 142
+
+   34 constant_expression: expression .
+   68 expression: expression . boolean_operation relation
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+
+    $default  reduce using rule 34 (constant_expression)
+
+    boolean_operation  go to state 116
+
+
+State 143
+
+   23 types: TYPE ID IS ARRAY '(' constant_num . DOTDOT constant_num ')' OF type_name
+
+    DOTDOT  shift, and go to state 172
+
+
+State 144
+
+   24 types: TYPE ID IS RECORD component_list ENDREC .
+
+    $default  reduce using rule 24 (types)
+
+
+State 145
+
+   28 component_list: component ';' . component_list
+   29               | component ';' .
+
+    ID  shift, and go to state 9
+
+    $default  reduce using rule 29 (component_list)
+
+    component_list   go to state 173
+    component        go to state 92
+    objects          go to state 93
+    constant         go to state 17
+    identifier_list  go to state 94
+
+
+State 146
+
+   31 objects: identifier_list ':' . type_name
+   33 constant: identifier_list ':' . CONSTANT ASSIGN constant_expression
+
+    ID        shift, and go to state 51
+    CONSTANT  shift, and go to state 52
+
+    type_name  go to state 54
+
+
+State 147
+
+   25 types: TYPE ID IS RANGE constant_num DOTDOT . constant_num
+
+    ID      shift, and go to state 95
+    NUMBER  shift, and go to state 96
+
+    constant_num  go to state 174
+
+
+State 148
+
+   12 mode: IN OUT .
+
+    $default  reduce using rule 12 (mode)
+
+
+State 149
+
+   10 parameters: identifier_list ':' mode type_name . ';' parameters
+   11           | identifier_list ':' mode type_name .
+
+    ';'  shift, and go to state 175
+
+    $default  reduce using rule 11 (parameters)
+
+
+State 150
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin sequence_of_statements . exception_part END ';'
+
+    EXCEPTION  shift, and go to state 78
+
+    $default  reduce using rule 96 (exception_part)
+
+    exception_part   go to state 176
+    exception_start  go to state 80
+
+
+State 151
+
+   46 opt_actual_para_part: '(' expression_list ')' .
+
+    $default  reduce using rule 46 (opt_actual_para_part)
+
+
+State 152
+
+   48 expression_list: expression_list ',' . expression
+
+    ID      shift, and go to state 66
+    NUMBER  shift, and go to state 67
+    NOT     shift, and go to state 68
+    '('     shift, and go to state 69
+    '-'     shift, and go to state 70
+
+    expression         go to state 177
+    relation           go to state 73
+    simple_expression  go to state 74
+    term               go to state 75
+    factor             go to state 76
+    primary            go to state 77
+
+
+State 153
+
+   44 opt_assign: ASSIGN expression .
+   68 expression: expression . boolean_operation relation
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+
+    $default  reduce using rule 44 (opt_assign)
+
+    boolean_operation  go to state 116
+
+
+State 154
+
+   38 statement: ID opt_actual_para_part opt_assign ';' .
+
+    $default  reduce using rule 38 (statement)
+
+
+State 155
+
+   68 expression: expression . boolean_operation relation
+   81 primary: ID '(' expression . ')'
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+    ')'  shift, and go to state 178
+
+    boolean_operation  go to state 116
+
+
+State 156
+
+   82 primary: '(' expression ')' .
+
+    $default  reduce using rule 82 (primary)
+
+
+State 157
+
+   68 expression: expression boolean_operation relation .
+   70 relation: relation . relational_operation simple_expression
+
+    EQ   shift, and go to state 117
+    NEQ  shift, and go to state 118
+    LT   shift, and go to state 119
+    GT   shift, and go to state 120
+    GTE  shift, and go to state 121
+    LTE  shift, and go to state 122
+
+    $default  reduce using rule 68 (expression)
+
+    relational_operation  go to state 123
+
+
+State 158
+
+   70 relation: relation relational_operation simple_expression .
+   73 simple_expression: simple_expression . adding_operation term
+
+    '-'  shift, and go to state 124
+    '+'  shift, and go to state 125
+
+    $default  reduce using rule 70 (relation)
+
+    adding_operation  go to state 126
+
+
+State 159
+
+   73 simple_expression: simple_expression adding_operation term .
+   75 term: term . multiplying_operation factor
+
+    '*'  shift, and go to state 127
+    '/'  shift, and go to state 128
+
+    $default  reduce using rule 73 (simple_expression)
+
+    multiplying_operation  go to state 129
+
+
+State 160
+
+   75 term: term multiplying_operation factor .
+
+    $default  reduce using rule 75 (term)
+
+
+State 161
+
+   77 factor: primary EXP primary .
+
+    $default  reduce using rule 77 (factor)
+
+
+State 162
+
+    2 main_body: main_specification IS declarative_part main_beg sequence_of_statements exception_part END ';' .
+
+    $default  reduce using rule 2 (main_body)
+
+
+State 163
+
+  102 choice_sequence: ID .
+
+    $default  reduce using rule 102 (choice_sequence)
+
+
+State 164
+
+  103 choice_sequence: OTHERS .
+
+    $default  reduce using rule 103 (choice_sequence)
+
+
+State 165
+
+  100 exception_hand: WHEN choice_sequence . ARROW sequence_of_statements
+  101 choice_sequence: choice_sequence . '|' ID
+
+    ARROW  shift, and go to state 179
+    '|'    shift, and go to state 180
+
+
+State 166
+
+   98 exception_list: exception_list exception_hand .
+
+    $default  reduce using rule 98 (exception_list)
+
+
+State 167
+
+   56 exit_cond: EXITWHEN condition ';' .
+
+    $default  reduce using rule 56 (exit_cond)
+
+
+State 168
+
+   50 loop_part: loop_start inside_loop ENDLOOP ';' .
+
+    $default  reduce using rule 50 (loop_part)
+
+
+State 169
+
+   60 else_if: ELSEIF condition . then_cond sequence_of_statements else_if
+
+    THEN  shift, and go to state 112
+
+    then_cond  go to state 181
+
+
+State 170
+
+   63 else: ELSE . sequence_of_statements
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 182
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 171
+
+   58 if_statement: ifcond sequence_of_statements else_if else . endif ';'
+
+    ENDIF  shift, and go to state 183
+
+    endif  go to state 184
+
+
+State 172
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT . constant_num ')' OF type_name
+
+    ID      shift, and go to state 95
+    NUMBER  shift, and go to state 96
+
+    constant_num  go to state 185
+
+
+State 173
+
+   28 component_list: component ';' component_list .
+
+    $default  reduce using rule 28 (component_list)
+
+
+State 174
+
+   25 types: TYPE ID IS RANGE constant_num DOTDOT constant_num .
+
+    $default  reduce using rule 25 (types)
+
+
+State 175
+
+   10 parameters: identifier_list ':' mode type_name ';' . parameters
+
+    ID  shift, and go to state 9
+
+    parameters       go to state 186
+    identifier_list  go to state 35
+
+
+State 176
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin sequence_of_statements exception_part . END ';'
+
+    END  shift, and go to state 187
+
+
+State 177
+
+   48 expression_list: expression_list ',' expression .
+   68 expression: expression . boolean_operation relation
+
+    AND  shift, and go to state 114
+    OR   shift, and go to state 115
+
+    $default  reduce using rule 48 (expression_list)
+
+    boolean_operation  go to state 116
+
+
+State 178
+
+   81 primary: ID '(' expression ')' .
+
+    $default  reduce using rule 81 (primary)
+
+
+State 179
+
+  100 exception_hand: WHEN choice_sequence ARROW . sequence_of_statements
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 188
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 180
+
+  101 choice_sequence: choice_sequence '|' . ID
+
+    ID  shift, and go to state 189
+
+
+State 181
+
+   60 else_if: ELSEIF condition then_cond . sequence_of_statements else_if
+
+    ID        shift, and go to state 37
+    RAISE     shift, and go to state 38
+    NULLWORD  shift, and go to state 39
+    LOOP      shift, and go to state 40
+    IF        shift, and go to state 41
+
+    $default  reduce using rule 37 (sequence_of_statements)
+
+    sequence_of_statements  go to state 190
+    statement               go to state 43
+    loop_part               go to state 44
+    loop_start              go to state 45
+    if_statement            go to state 46
+    ifcond                  go to state 47
+
+
+State 182
+
+   63 else: ELSE sequence_of_statements .
+
+    $default  reduce using rule 63 (else)
+
+
+State 183
+
+   65 endif: ENDIF .
+
+    $default  reduce using rule 65 (endif)
+
+
+State 184
+
+   58 if_statement: ifcond sequence_of_statements else_if else endif . ';'
+
+    ';'  shift, and go to state 191
+
+
+State 185
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT constant_num . ')' OF type_name
+
+    ')'  shift, and go to state 192
+
+
+State 186
+
+   10 parameters: identifier_list ':' mode type_name ';' parameters .
+
+    $default  reduce using rule 10 (parameters)
+
+
+State 187
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin sequence_of_statements exception_part END . ';'
+
+    ';'  shift, and go to state 193
+
+
+State 188
+
+  100 exception_hand: WHEN choice_sequence ARROW sequence_of_statements .
+
+    $default  reduce using rule 100 (exception_hand)
+
+
+State 189
+
+  101 choice_sequence: choice_sequence '|' ID .
+
+    $default  reduce using rule 101 (choice_sequence)
+
+
+State 190
+
+   60 else_if: ELSEIF condition then_cond sequence_of_statements . else_if
+
+    ELSEIF  shift, and go to state 139
+
+    $default  reduce using rule 61 (else_if)
+
+    else_if  go to state 194
+
+
+State 191
+
+   58 if_statement: ifcond sequence_of_statements else_if else endif ';' .
+
+    $default  reduce using rule 58 (if_statement)
+
+
+State 192
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT constant_num ')' . OF type_name
+
+    OF  shift, and go to state 195
+
+
+State 193
+
+    5 procedure_body: procedure_specification formal_parameter_part IS declarative_part procedure_begin sequence_of_statements exception_part END ';' .
+
+    $default  reduce using rule 5 (procedure_body)
+
+
+State 194
+
+   60 else_if: ELSEIF condition then_cond sequence_of_statements else_if .
+
+    $default  reduce using rule 60 (else_if)
+
+
+State 195
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT constant_num ')' OF . type_name
+
+    ID  shift, and go to state 51
+
+    type_name  go to state 196
+
+
+State 196
+
+   23 types: TYPE ID IS ARRAY '(' constant_num DOTDOT constant_num ')' OF type_name .
+
+    $default  reduce using rule 23 (types)
